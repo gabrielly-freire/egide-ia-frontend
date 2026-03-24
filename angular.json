@@ -60,7 +60,8 @@
               "buildTarget": "egide:build:production"
             },
             "development": {
-              "buildTarget": "egide:build:development"
+              "buildTarget": "egide:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
