@@ -1,8 +1,14 @@
-<app-header />
+@if ((headerVisible())) {
+  <app-header />
+}
 
 <main>
-  <app-sidebar />
+  @if (sidebarVisible()) {
+    <app-sidebar />
+  }
   <router-outlet />
 </main>
 
-<app-footer />
+@if (footerVisible()) {
+  <app-footer />
+}
