@@ -12,9 +12,9 @@ import { Sidebar } from '../components/sidebar/sidebar';
 })
 export class Layout {
 
-  sidebarVisible = signal(false);
-  headerVisible = signal(false);
-  footerVisible = signal(false);
+  sidebarVisible = signal(true);
+  headerVisible = signal(true);
+  footerVisible = signal(true);
 
   toggleSidebar(): void {
     this.sidebarVisible.update(value => !value);

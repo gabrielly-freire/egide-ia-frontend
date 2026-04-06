@@ -1,1 +1,30 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --bg-primary: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #1e293b;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --input-bg: #f1f5f9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #0a0e18;
+    --bg-card: #161b27;
+    --text-main: #f1f5f9;
+    --border-color: rgba(255, 255, 255, 0.06);
+    --input-bg: #0d1117;
+  }
+}
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-primary) !important;
+  color: var(--text-main);
+  margin: 0;
+  transition: background-color 0.3s ease;
+}
+
+.app-main {
+  background-color: var(--bg-primary) !important;
+  padding: 60px 80px;
+}

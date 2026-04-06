@@ -1,1 +1,17 @@
-<p>header works!</p>
+<nav class="egide-header">
+  <div class="header-logo">
+    <span class="logo-text">ÉGIDE<span class="logo-dot">.IA</span></span>
+  </div>
+
+  <div class="header-nav">
+    <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">DASHBOARD</a>
+    <a routerLink="/policies" routerLinkActive="active" class="nav-link">POLÍTICAS</a>
+  </div>
+
+  <div class="header-actions">
+    <div class="user-avatar">
+      <img src="assets/avatar.png" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+      <span class="avatar-fallback">A</span>
+    </div>
+  </div>
+</nav>
