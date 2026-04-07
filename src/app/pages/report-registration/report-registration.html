@@ -1,0 +1,41 @@
+<div class="page-header">
+  <span class="subtitle">Painel do Reclamante</span>
+  <h1 class="title">Nova Manifestação</h1>
+</div>
+
+<form [formGroup]="reportForm" (ngSubmit)="onSubmit()" class="card-form">
+  <div class="form-group">
+    <label>Título do Relato</label>
+    <input formControlName="title" type="text" class="form-control" placeholder="Ex: Irregularidade no setor X">
+  </div>
+
+  <div class="form-group">
+    <label>Descrição Detalhada</label>
+    <textarea formControlName="description" rows="5" class="form-control" placeholder="Descreva o ocorrido com o máximo de detalhes possível..."></textarea>
+  </div>
+
+  <div class="upload-area" (click)="fileInput.click()">
+    <span class="upload-text">📁 Clique para anexar arquivos</span>
+    <p class="upload-hint">PDF, PNG ou JPG (máx 10MB)</p>
+    
+    <input 
+        type="file" 
+        #fileInput 
+        (change)="onFileSelected($event)" 
+        style="display: none" 
+        accept=".pdf,.png,.jpg,.jpeg">
+  </div>
+
+  @if (selectedFile) {
+    <p style="color: #6366f1; font-size: 12px; margin-top: -20px; margin-bottom: 20px; font-weight: 600;">
+      Arquivo selecionado: {{ selectedFile.name }}
+    </p>
+  }
+
+  <div class="button-group">
+    <button type="button" class="btn btn-cancel" (click)="reportForm.reset()">CANCELAR</button>
+    <button type="submit" [disabled]="reportForm.invalid || loading" class="btn btn-submit">
+      {{ loading ? 'PROCESSANDO...' : 'ENVIAR MANIFESTAÇÃO' }}
+    </button>
+  </div>
+</form>

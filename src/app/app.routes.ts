@@ -11,4 +11,9 @@ export const routes: Routes = [
     path: 'home',
     component: Home,
   },
+  {
+    path: 'cadastrar-manifestacao',
+    loadComponent: () => import('./pages/report-registration/report-registration').then(m => m.ReportRegistration),
+    title: 'Égide - Nova Manisfestação'
+  }
 ];
