@@ -1,0 +1,63 @@
+<div class="list-container">
+  <div class="page-header">
+    <div>
+      <span class="subtitle">PAINEL DO RECLAMANTE</span>
+      <h1 class="title">Minhas Manifestações</h1>
+    </div>
+    <button class="btn-new" routerLink="/cadastrar-manifestacao">+ NOVA MANIFESTAÇÃO</button>
+  </div>
+
+  <div class="summary-cards">
+    <div class="card">
+      <span class="card-label">TOTAL</span>
+      <div class="card-value">{{ reports.length }}</div>
+      <span class="card-desc">Manifestações registradas no sistema</span>
+    </div>
+    <div class="card">
+      <span class="card-label">EM ANÁLISE</span>
+      <div class="card-value">--</div>
+    </div>
+    <div class="card">
+      <span class="card-label">CONCLUÍDAS</span>
+      <div class="card-value">--</div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <div class="table-header">
+      <h2>HISTÓRICO RECENTE</h2>
+    </div>
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>PROTOCOLO / TÍTULO</th>
+          <th>STATUS</th>
+          <th>DATA DE ENVIO</th>
+          <th>AÇÕES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let report of reports">
+          <td>
+            <span class="report-protocol">#EG-{{ report.id }}-2026</span>
+            <div class="report-title">{{ report.title }}</div>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(report.status)">
+              {{ report.status || 'PENDENTE' }}
+            </span>
+          </td>
+          <td>06 Abr 2026</td>
+          <td>
+            <button class="btn-view">👁</button>
+          </td>
+        </tr>
+        <tr *ngIf="reports.length === 0">
+          <td colspan="4" style="text-align: center; padding: 40px; color: #94a3b8;">
+            Nenhuma manifestação encontrada.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
