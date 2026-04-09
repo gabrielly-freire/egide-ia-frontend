@@ -1,32 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReportService } from '../../services/report/report.service';
 import { ReportDTO } from '../../models/report.model';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-report-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatIconModule],
   templateUrl: './report-list.html',
   styleUrl: './report-list.css'
 })
 export class ReportList implements OnInit {
-  reports: ReportDTO[] = [];
+  reports = signal<ReportDTO[]>([]);
 
   constructor(private reportService: ReportService) {}
 
   ngOnInit(): void {
-  this.reportService.list().subscribe({
-    next: (data: ReportDTO[]) => { 
-      console.log('Dados recebidos:', data); // Adicione este log para conferir no console
-      this.reports = data;
-    },
-    error: (err: any) => {
-      console.error('Erro na listagem:', err);
-    }
-  });
-}
+    this.reportService.list().subscribe({
+      next: (data: ReportDTO[]) => { 
+        this.reports.set(data);
+      },
+      error: (err: any) => {
+        console.error('Erro na listagem:', err);
+      }
+    });
+  }
 
   getStatusClass(status: string | undefined): string {
     const s = status?.toUpperCase();

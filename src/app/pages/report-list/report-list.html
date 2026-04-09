@@ -37,7 +37,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let report of reports">
+        <tr *ngFor="let report of reports()">
           <td>
             <span class="report-protocol">#EG-{{ report.id }}-2026</span>
             <div class="report-title">{{ report.title }}</div>
@@ -47,9 +47,11 @@
               {{ report.status || 'PENDENTE' }}
             </span>
           </td>
-          <td>06 Abr 2026</td>
+          <td>{{report.createdAt}}</td>
           <td>
-            <button class="btn-view">👁</button>
+            <button class="btn-view">
+                <mat-icon>visibility</mat-icon>
+            </button>
           </td>
         </tr>
         <tr *ngIf="reports.length === 0">

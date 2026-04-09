@@ -15,15 +15,20 @@ export abstract class BaseService<T> {
   }
 
   list(page: number = 0, size: number = 10): Observable<T[]> {
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
+  const params = new HttpParams()
+    .set('page', page.toString())
+    .set('size', size.toString());
 
-    return this.http.get<any>(this.url, { params }).pipe(
-      map(res => res.content || res),
-      catchError(err => this.handleError(err))
-    );
-  }
+  return this.http.get<any>(this.url, { params }).pipe(
+    map(res => {
+      if (Array.isArray(res)) {
+        return res;
+      }
+      return res.content || [];
+    }),
+    catchError(err => this.handleError(err))
+  );
+}
 
   getById(id: number | string): Observable<T> {
     return this.http.get<T>(`${this.url}/${id}`).pipe(

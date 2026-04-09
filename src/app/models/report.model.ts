@@ -3,4 +3,5 @@ export interface ReportDTO {
   title: string;
   description: string;
   status?: string;
+  createdAt?: string;
 }
