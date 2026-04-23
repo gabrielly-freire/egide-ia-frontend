@@ -31,12 +31,22 @@
       <i class="pi pi-plus-circle"></i>
       <span>Nova Manifestação</span>
     </a>
-  </nav>
 
-  <div class="user-footer" style="padding: 16px; border-top: 1px solid var(--border-color);">
-    <button class="nav-item" style="width: 100%; border: none; background: transparent; cursor: pointer; color: #ef4444;">
+    <a routerLink="/usuarios"
+       routerLinkActive="active-link"
+       class="nav-item">
+      <i class="pi pi-users"></i>
+      <span>Usuários</span>
+    </a>
+
+    <button
+      type="button"
+      class="nav-item logout-item"
+      style="width: 100%; border: none; background: transparent; cursor: pointer;"
+      (click)="logout()"
+    >
       <i class="pi pi-sign-out"></i>
-      <span>Sair</span>
+      <span>Logout</span>
     </button>
-  </div>
+  </nav>
 </div>

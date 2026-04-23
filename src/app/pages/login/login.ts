@@ -32,7 +32,7 @@ export class Login {
     if (this.authService.hasToken()) {
       this.authService.restoreSession().subscribe(user => {
         if (user) {
-          this.router.navigateByUrl('/home');
+          this.router.navigateByUrl('/dashboard');
         }
       });
     }
@@ -59,7 +59,7 @@ export class Login {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: () => {
-          this.router.navigateByUrl('/home');
+          this.router.navigateByUrl('/dashboard');
         },
         error: (error: Error) => {
           this.authError.set(error.message);

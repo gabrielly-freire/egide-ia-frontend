@@ -1,12 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { BaseService } from '../base/base';
-import { ReportDTO } from '../../models/report.model';
-import { Observable } from 'rxjs';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { catchError } from 'rxjs/operators';
-import { BaseService } from '../base/base'; // IMPORTANTE
 import {
   ReportDTO,
   ReportRespondRequestDTO,

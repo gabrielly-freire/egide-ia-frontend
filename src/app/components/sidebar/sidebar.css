@@ -20,6 +20,14 @@
   color: var(--text-muted);
 }
 
+.logout-item {
+  color: #ef4444;
+}
+
+.logout-item i {
+  color: #ef4444;
+}
+
 .active-link {
   background-color: #6365f12a !important;
   color: #6366f1 !important;
