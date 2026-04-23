@@ -1,39 +1,59 @@
-<div style="background-color: var(--bg-primary);" class="p-8 min-h-screen transition-all duration-300">
-  
-  <h1 style="color: var(--text-main);" class="text-3xl font-bold mb-8">Painel de Gestão</h1>
-
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    
-    <div style="background-color: var(--bg-card); color: var(--text-main);" 
-         class="p-6 rounded-xl shadow-md border-l-4 border-blue-500">
-      <p style="color: var(--text-muted);" class="text-sm uppercase font-semibold">Total de Manifestações</p>
-      <h2 class="text-4xl font-bold">{{ status.total }}</h2>
-    </div>
-
-    <div style="background-color: var(--bg-card); color: var(--text-main);" 
-         class="p-6 rounded-xl shadow-md border-l-4 border-yellow-500">
-      <p style="color: var(--text-muted);" class="text-sm uppercase font-semibold">Pendentes</p>
-      <h2 class="text-4xl font-bold">{{ status.pendentes }}</h2>
-    </div>
-
-    <div style="background-color: var(--bg-card); color: var(--text-main);" 
-         class="p-6 rounded-xl shadow-md border-l-4 border-green-500">
-      <p style="color: var(--text-muted);" class="text-sm uppercase font-semibold">Resolvidas</p>
-      <h2 class="text-4xl font-bold">{{ status.analisados }}</h2>
-    </div>
-
-    <div style="background-color: var(--bg-card); color: var(--text-main);" 
-         class="p-6 rounded-xl shadow-md border-l-4 border-green-500">
-      <p style="color: var(--text-muted);" class="text-sm uppercase font-semibold">Resolvidas</p>
-      <h2 class="text-4xl font-bold">{{ status.rejeitados }}</h2>
-    </div>
-
+<div class="dashboard-container">
+  <div class="page-header">
+    <span class="subtitle">PAINEL DE GESTÃO</span>
+    <h1 class="title">Visão Geral</h1>
   </div>
 
-  <div style="background-color: var(--bg-card); border: 1px dashed var(--text-muted);" 
-       class="p-8 rounded-xl h-64 flex items-center justify-center opacity-60">
-    <p style="color: var(--text-muted);" class="italic font-medium">
-      Análise de Tendências (IA) em processamento...
-    </p>
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <span class="stat-label">Total de Manifestações</span>
+      <h2 class="stat-value">{{ status().total }}</h2>
+    </div>
+
+    <div class="stat-card yellow">
+      <span class="stat-label">Pendentes</span>
+      <h2 class="stat-value">{{ status().pendentes }}</h2>
+    </div>
+
+    <div class="stat-card green">
+      <span class="stat-label">Analisadas</span>
+      <h2 class="stat-value">{{ status().analisados }}</h2>
+    </div>
+
+    <div class="stat-card red">
+      <span class="stat-label">Rejeitadas</span>
+      <h2 class="stat-value">{{ status().rejeitados }}</h2>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="chart-card">
+      <h3 class="card-title">Distribuição por Status</h3>
+      <div class="simple-chart">
+        <div class="chart-row">
+          <span class="label">Pendentes</span>
+          <div class="bar-container">
+            <div class="bar yellow-bar" [style.width.%]="(status().pendentes / status().total) * 100 || 0"></div>
+          </div>
+          <span class="percentage">{{ status().pendentes }}</span>
+        </div>
+
+        <div class="chart-row">
+          <span class="label">Resolvidas</span>
+          <div class="bar-container">
+            <div class="bar green-bar" [style.width.%]="(status().analisados / status().total) * 100 || 0"></div>
+          </div>
+          <span class="percentage">{{ status().analisados }}</span>
+        </div>
+
+        <div class="chart-row">
+          <span class="label">Rejeitadas</span>
+          <div class="bar-container">
+            <div class="bar red-bar" [style.width.%]="(status().rejeitados / status().total) * 100 || 0"></div>
+          </div>
+          <span class="percentage">{{ status().rejeitados }}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

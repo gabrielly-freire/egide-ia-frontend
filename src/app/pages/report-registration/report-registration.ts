@@ -32,8 +32,19 @@ export class ReportRegistration {
   onSubmit() {
     if (this.reportForm.valid) {
       this.loading = true;
-      
-      this.reportService.create(this.reportForm.value).subscribe({
+
+      const formData = new FormData();
+
+      const reportData = new Blob([JSON.stringify(this.reportForm.value)], {
+        type: 'application/json'
+      });
+      formData.append('report', reportData);
+
+      if (this.selectedFile) {
+        formData.append('files', this.selectedFile);
+      }
+
+      this.reportService.create(formData as any).subscribe({
         next: () => {
           alert('Manifestação enviada com sucesso!');
           this.reportForm.reset();
