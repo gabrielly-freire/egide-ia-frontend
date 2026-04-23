@@ -4,5 +4,6 @@ export interface User {
   username: string;
   password: string;
   name: string;
-  role: string;
+  role: 'REMONSTRANT' | 'LISTENER' | 'MANAGER' | 'ADMIN';
+  departmentId: number;
 }

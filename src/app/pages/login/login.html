@@ -1,0 +1,124 @@
+<section class="login-page">
+  <main class="login-canvas">
+    <section class="brand-column">
+      <div class="brand-texture"></div>
+
+      <div class="brand-top">
+        <div class="brand-logo-icon">
+          <span class="material-symbols-outlined">shield</span>
+        </div>
+        <span class="brand-logo-text">Egide.IA</span>
+      </div>
+
+      <div class="brand-content">
+        <h1>Arquitetura de Confianca e Integridade Digital.</h1>
+        <p>
+          A plataforma lider em gestao de compliance, oferecendo seguranca de nivel
+          institucional para suas operacoes mais criticas.
+        </p>
+      </div>
+
+      <div class="brand-metrics">
+        <div>
+          <strong>100%</strong>
+          <span>Auditavel</span>
+        </div>
+        <div>
+          <strong>AES-256</strong>
+          <span>Criptografia</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-column">
+      <div class="mobile-brand">
+        <span class="material-symbols-outlined">shield</span>
+        <span>Egide.IA</span>
+      </div>
+
+      <header class="form-header">
+        <h2>Acessar Plataforma de Compliance</h2>
+        <p>Insira suas credenciais corporativas abaixo.</p>
+      </header>
+
+      <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="field-group">
+          <label for="username">Usuario Corporativo</label>
+          <div class="input-shell">
+            <span class="material-symbols-outlined">person</span>
+            <input
+              id="username"
+              formControlName="username"
+              type="text"
+              placeholder="usuario ou email corporativo"
+              autocomplete="username"
+            />
+          </div>
+          @if (loginForm.controls.username.invalid && loginForm.controls.username.touched) {
+            <small>Usuario corporativo obrigatorio.</small>
+          }
+        </div>
+
+        <div class="field-group">
+          <div class="field-top">
+            <label for="password">Senha</label>
+            <a href="#">Esqueceu a senha?</a>
+          </div>
+          <div class="input-shell">
+            <span class="material-symbols-outlined">lock</span>
+            <input
+              id="password"
+              formControlName="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+            <button
+              class="password-toggle"
+              type="button"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Exibir senha'"
+            >
+              <span class="material-symbols-outlined">
+                {{ showPassword() ? 'visibility_off' : 'visibility' }}
+              </span>
+            </button>
+          </div>
+          @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+            <small>Senha obrigatoria.</small>
+          }
+        </div>
+
+        <label class="remember-row" for="remember-me">
+          <input id="remember-me" type="checkbox" />
+          <span>Manter conectado neste dispositivo institucional</span>
+        </label>
+
+        <button class="submit-button" type="submit" [disabled]="loading()">
+          <span>{{ loading() ? 'Autenticando...' : 'Entrar no Sistema' }}</span>
+          @if (!loading()) {
+            <span class="material-symbols-outlined">arrow_forward</span>
+          }
+        </button>
+
+        @if (authError()) {
+          <p class="auth-error">{{ authError() }}</p>
+        }
+      </form>
+
+      <footer class="form-footer">
+        <div class="server-status">
+          <span class="status-dot"></span>
+          <span>Servidor: Secure-South-1 (Online)</span>
+        </div>
+        <p>
+          Ao acessar este sistema, voce concorda com os Protocolos de
+          Confidencialidade e a Politica de Privacidade de Dados da Egide.IA.
+        </p>
+      </footer>
+    </section>
+  </main>
+
+  <div class="corner corner-top"></div>
+  <div class="corner corner-bottom"></div>
+</section>

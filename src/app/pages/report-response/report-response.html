@@ -1,0 +1,55 @@
+<div class="container">
+  <div class="header">
+    <div>
+      <span class="subtitle">OUVIDORIA</span>
+      <h1 class="title">Responder Manifestação</h1>
+    </div>
+    <a class="btn-secondary" routerLink="/manifestacoes">Voltar</a>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Carregando...</div>
+
+  <div *ngIf="report() as r" class="card">
+    <div class="card-title">
+      <div class="protocol">Protocolo: {{ r.protocolNumber || ('#EG-' + r.id + '-2026') }}</div>
+      <div class="report-title">{{ r.title }}</div>
+    </div>
+    <div class="report-desc">{{ r.description }}</div>
+  </div>
+
+  <div *ngIf="suggestion() as s" class="card">
+    <div class="card-title">
+      <div class="section-title">Sugestão da IA</div>
+      <button type="button" class="btn-secondary" [disabled]="submitting()" (click)="useSuggestion()">
+        Aplicar sugestão
+      </button>
+    </div>
+    <div class="report-desc">{{ s.suggestedResponse }}</div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Resposta final</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <textarea
+        #responseTextarea
+        formControlName="responseText"
+        rows="8"
+        class="textarea"
+        placeholder="Escreva a resposta (ou deixe em branco para usar a sugestão da IA)"
+      ></textarea>
+      <div class="actions">
+        <button type="submit" class="btn-primary" [disabled]="submitting()">Registrar resposta</button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="result() as res" class="card">
+    <div class="section-title">Confirmação</div>
+    <div class="report-desc">
+      Status: {{ res.status }}<br />
+      Usou sugestão da IA: {{ res.usedAiSuggestion ? 'Sim' : 'Não' }}<br />
+      Respondido em: {{ formatDateTime(res.respondedAt) }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,147 @@
+<div class="users-container">
+  <div class="page-header">
+    <div>
+      <span class="subtitle">Painel Administrativo</span>
+      <h1 class="title">Gerenciamento de Usuarios</h1>
+    </div>
+    <button class="btn-primary" type="button" (click)="openCreateForm()">
+      + NOVO USUARIO
+    </button>
+  </div>
+
+  @if (error()) {
+    <div class="feedback error">{{ error() }}</div>
+  }
+  @if (success()) {
+    <div class="feedback success">{{ success() }}</div>
+  }
+
+  @if (showForm()) {
+    <form class="card-form" [formGroup]="userForm" (ngSubmit)="saveUser()">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="name">Nome Completo</label>
+          <input id="name" type="text" class="form-control" formControlName="name" />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" class="form-control" formControlName="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="username">Login</label>
+          <input id="username" type="text" class="form-control" formControlName="username" autocomplete="username" />
+        </div>
+
+        <div class="form-group">
+          <label for="role">Perfil</label>
+          <select id="role" class="form-control" formControlName="role">
+            @for (option of roleOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="departmentId">Departamento</label>
+          <select id="departmentId" class="form-control" formControlName="departmentId">
+            <option [value]="0">
+              {{ loadingDepartments() ? 'Carregando departamentos...' : 'Selecione um departamento' }}
+            </option>
+            @for (department of departments(); track department.id) {
+              <option [value]="department.id">{{ department.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            formControlName="password"
+            autocomplete="new-password"
+          />
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button type="button" class="btn btn-cancel" (click)="closeForm()">Cancelar</button>
+        <button type="submit" class="btn btn-submit" [disabled]="saving() || userForm.invalid">
+          {{ saving() ? 'SALVANDO...' : 'SALVAR USUARIO' }}
+        </button>
+      </div>
+    </form>
+  }
+
+  <div class="table-container">
+    <div class="table-header">
+      <h2>Usuarios cadastrados</h2>
+      <span class="table-count">Total: {{ totalElements() }}</span>
+    </div>
+
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>Nome / Email</th>
+          <th>Login</th>
+          <th>Perfil</th>
+          <th>Departamento</th>
+          <th>Acoes</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading()) {
+          <tr>
+            <td colspan="5" class="empty-row">Carregando usuarios...</td>
+          </tr>
+        } @else {
+          @for (user of users(); track user.id ?? user.username) {
+            <tr>
+              <td>
+                <div class="primary-text">{{ user.name }}</div>
+                <div class="secondary-text">{{ user.email }}</div>
+              </td>
+              <td>{{ user.username }}</td>
+              <td>
+                <span class="badge-role">{{ roleLabel(user.role) }}</span>
+              </td>
+              <td>{{ departmentName(user.departmentId) }}</td>
+              <td>
+                <div class="action-group">
+                  <button type="button" class="btn-action edit" (click)="openEditForm(user)">
+                    Editar
+                  </button>
+                  <button type="button" class="btn-action remove" (click)="deleteUser(user)">
+                    Excluir
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-row">Nenhum usuario encontrado.</td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination">
+    <button type="button" class="btn-page" (click)="previousPage()" [disabled]="page() === 0 || loading()">
+      Anterior
+    </button>
+    <span>Pagina {{ page() + 1 }} de {{ totalPages() || 1 }}</span>
+    <button
+      type="button"
+      class="btn-page"
+      (click)="nextPage()"
+      [disabled]="page() + 1 >= totalPages() || loading()"
+    >
+      Proxima
+    </button>
+  </div>
+</div>
