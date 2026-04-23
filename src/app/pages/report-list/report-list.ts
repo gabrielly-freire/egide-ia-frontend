@@ -19,7 +19,7 @@ export class ReportList implements OnInit {
 
   ngOnInit(): void {
     this.reportService.list().subscribe({
-      next: (data: ReportDTO[]) => { 
+      next: (data: ReportDTO[]) => {
         this.reports.set(data);
       },
       error: (err: any) => {
