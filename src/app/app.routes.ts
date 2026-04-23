@@ -40,6 +40,12 @@ export const routes: Routes = [
         title: 'Egide - Manifestacoes'
       },
       {
+        path: 'manifestacoes/:id/responder',
+        loadComponent: () =>
+          import('./pages/report-response/report-response').then(m => m.ReportResponse),
+        title: 'Egide - Responder Manifestacao'
+      },
+      {
         path: 'usuarios',
         loadComponent: () =>
           import('./pages/user-management/user-management').then(
