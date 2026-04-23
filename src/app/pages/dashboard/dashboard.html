@@ -1,0 +1,39 @@
+<div style="background-color: var(--bg-primary);" class="p-8 min-h-screen transition-all duration-300">
+  
+  <h1 style="color: var(--text-main);" class="text-3xl font-bold mb-8">Painel de Gestão</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    
+    <div style="background-color: var(--bg-card); color: var(--text-main);" 
+         class="p-6 rounded-xl shadow-md border-l-4 border-blue-500">
+      <p style="color: var(--text-muted);" class="text-sm uppercase font-semibold">Total de Manifestações</p>
+      <h2 class="text-4xl font-bold">{{ status.total }}</h2>
+    </div>
+
+    <div style="background-color: var(--bg-card); color: var(--text-main);" 
+         class="p-6 rounded-xl shadow-md border-l-4 border-yellow-500">
+      <p style="color: var(--text-muted);" class="text-sm uppercase font-semibold">Pendentes</p>
+      <h2 class="text-4xl font-bold">{{ status.pendentes }}</h2>
+    </div>
+
+    <div style="background-color: var(--bg-card); color: var(--text-main);" 
+         class="p-6 rounded-xl shadow-md border-l-4 border-green-500">
+      <p style="color: var(--text-muted);" class="text-sm uppercase font-semibold">Resolvidas</p>
+      <h2 class="text-4xl font-bold">{{ status.analisados }}</h2>
+    </div>
+
+    <div style="background-color: var(--bg-card); color: var(--text-main);" 
+         class="p-6 rounded-xl shadow-md border-l-4 border-green-500">
+      <p style="color: var(--text-muted);" class="text-sm uppercase font-semibold">Resolvidas</p>
+      <h2 class="text-4xl font-bold">{{ status.rejeitados }}</h2>
+    </div>
+
+  </div>
+
+  <div style="background-color: var(--bg-card); border: 1px dashed var(--text-muted);" 
+       class="p-8 rounded-xl h-64 flex items-center justify-center opacity-60">
+    <p style="color: var(--text-muted);" class="italic font-medium">
+      Análise de Tendências (IA) em processamento...
+    </p>
+  </div>
+</div>
