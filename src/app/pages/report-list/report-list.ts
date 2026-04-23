@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReportService } from '../../services/report/report.service';
@@ -14,6 +14,20 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class ReportList implements OnInit {
   reports = signal<ReportDTO[]>([]);
+
+  reportsInAnalysis = computed(() => 
+    this.reports().filter(r => {
+      const s = r.status?.toUpperCase();
+      return s === 'PENDING' || s === 'PENDENTE';
+    }).length
+  );
+
+  reportsCompleted = computed(() => 
+    this.reports().filter(r => {
+      const s = r.status?.toUpperCase();
+      return s === 'ANALYZED' || s === 'ANALISADO';
+    }).length
+  );
 
   constructor(private reportService: ReportService) {}
 
