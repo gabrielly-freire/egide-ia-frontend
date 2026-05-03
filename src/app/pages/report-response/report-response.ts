@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReportService } from '../../services/report/report.service';
 import { finalize } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ReportDTO,
   ReportRespondResponseDTO,
@@ -20,6 +21,7 @@ import {
 export class ReportResponse implements OnInit {
   report = signal<ReportDTO | null>(null);
   suggestion = signal<ReportResponseSuggestionResponseDTO | null>(null);
+  existingResponse = signal<ReportRespondResponseDTO | null>(null);
   result = signal<ReportRespondResponseDTO | null>(null);
   loading = signal<boolean>(false);
   submitting = signal<boolean>(false);
@@ -47,15 +49,18 @@ export class ReportResponse implements OnInit {
 
     let pending = 2;
     this.loading.set(true);
+    const done = () => {
+      pending -= 1;
+      if (pending <= 0) {
+        this.loading.set(false);
+      }
+    };
 
     this.reportService
       .getById(reportId)
       .pipe(
         finalize(() => {
-          pending -= 1;
-          if (pending <= 0) {
-            this.loading.set(false);
-          }
+          done();
         })
       )
       .subscribe({
@@ -64,21 +69,39 @@ export class ReportResponse implements OnInit {
       });
 
     this.reportService
-      .suggestResponse(reportId)
+      .getResponse(reportId)
       .pipe(
         finalize(() => {
-          pending -= 1;
-          if (pending <= 0) {
-            this.loading.set(false);
-          }
+          done();
         })
       )
       .subscribe({
         next: data => {
-          this.suggestion.set(data);
-          this.form.patchValue({ responseText: data.suggestedResponse });
+          this.existingResponse.set(data);
+          this.form.patchValue({ responseText: data.responseText });
         },
-        error: err => console.error('Erro ao carregar sugestão:', err)
+        error: (err: unknown) => {
+          const httpErr = err as HttpErrorResponse;
+          if (httpErr?.status === 404) {
+            pending += 1;
+            this.reportService
+              .suggestResponse(reportId)
+              .pipe(finalize(() => done()))
+              .subscribe({
+                next: data => {
+                  this.suggestion.set(data);
+                  const current = (this.form.value.responseText as string | undefined) || '';
+                  if (!current.trim() && !this.existingResponse()) {
+                    this.form.patchValue({ responseText: data.suggestedResponse });
+                  }
+                },
+                error: sugErr => console.error('Erro ao carregar sugestão:', sugErr)
+              });
+            return;
+          }
+
+          console.error('Erro ao carregar resposta existente:', err);
+        }
       });
   }
 
@@ -117,13 +140,12 @@ export class ReportResponse implements OnInit {
     this.reportService.respond(reportId, { responseText, aiSuggestion }).subscribe({
       next: data => {
         this.result.set(data);
+        this.existingResponse.set(data);
         this.submitting.set(false);
-        alert('Resposta registrada com sucesso!');
       },
       error: err => {
         console.error('Erro ao responder:', err);
         this.submitting.set(false);
-        alert('Erro ao registrar resposta. Verifique a conexão com o servidor.');
       }
     });
   }
@@ -147,6 +169,22 @@ export class ReportResponse implements OnInit {
       minute: '2-digit',
       second: '2-digit'
     }).format(date);
+  }
+
+  formatStatus(value: string | null | undefined): string {
+    const status = (value || '').trim().toUpperCase();
+    switch (status) {
+      case 'PENDING':
+        return 'Pendente';
+      case 'ANALYZED':
+        return 'Analisada';
+      case 'REJECTED':
+        return 'Rejeitada';
+      case 'RESPONDED':
+        return 'Respondida';
+      default:
+        return value || '';
+    }
   }
 
   private normalizeIsoDate(value: string): string {

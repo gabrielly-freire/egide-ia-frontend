@@ -17,39 +17,75 @@
     <div class="report-desc">{{ r.description }}</div>
   </div>
 
-  <div *ngIf="suggestion() as s" class="card">
-    <div class="card-title">
-      <div class="section-title">Sugestão da IA</div>
-      <button type="button" class="btn-secondary" [disabled]="submitting()" (click)="useSuggestion()">
-        Aplicar sugestão
-      </button>
-    </div>
-    <div class="report-desc">{{ s.suggestedResponse }}</div>
-  </div>
+  <div class="card response-card">
+    <div class="response-header">
+      <div class="response-title">
+        <div class="section-title">Resposta</div>
+        <div *ngIf="existingResponse() as existing" class="response-meta">
+          <span>Já respondida em {{ formatDateTime(existing.respondedAt) }}</span>
+          <span>•</span>
+          <span>{{ existing.usedAiSuggestion ? 'Usou sugestão da IA' : 'Resposta manual' }}</span>
+        </div>
+        <div *ngIf="!existingResponse()" class="response-meta">
+          <span>Edite o texto antes de registrar</span>
+        </div>
+      </div>
 
-  <div class="card">
-    <div class="section-title">Resposta final</div>
+      <div class="response-actions">
+        <button
+          *ngIf="suggestion()"
+          type="button"
+          class="btn-secondary"
+          [disabled]="submitting()"
+          (click)="useSuggestion()"
+        >
+          Inserir sugestão da IA
+        </button>
+      </div>
+    </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
       <textarea
         #responseTextarea
         formControlName="responseText"
-        rows="8"
+        rows="10"
         class="textarea"
-        placeholder="Escreva a resposta (ou deixe em branco para usar a sugestão da IA)"
+        placeholder="Escreva a resposta"
       ></textarea>
       <div class="actions">
-        <button type="submit" class="btn-primary" [disabled]="submitting()">Registrar resposta</button>
+        <button type="submit" class="btn-primary" [disabled]="submitting()">
+          {{ existingResponse() ? 'Atualizar resposta' : 'Registrar resposta' }}
+        </button>
       </div>
     </form>
   </div>
 
-  <div *ngIf="result() as res" class="card">
-    <div class="section-title">Confirmação</div>
-    <div class="report-desc">
-      Status: {{ res.status }}<br />
-      Usou sugestão da IA: {{ res.usedAiSuggestion ? 'Sim' : 'Não' }}<br />
-      Respondido em: {{ formatDateTime(res.respondedAt) }}
+  <div *ngIf="(result() ?? existingResponse()) as res" class="card confirmation-card">
+    <div class="confirmation-header">
+      <div class="confirmation-title">
+        <div class="section-title">Confirmação</div>
+        <div class="confirmation-subtitle">
+          {{ result() ? 'Resposta registrada com sucesso' : 'Resposta já registrada' }}
+        </div>
+      </div>
+
+      <div class="confirmation-badges">
+        <span class="badge badge-status">{{ formatStatus(res.status) }}</span>
+        <span class="badge" [class.badge-ai]="res.usedAiSuggestion" [class.badge-manual]="!res.usedAiSuggestion">
+          {{ res.usedAiSuggestion ? 'Sugestão IA' : 'Manual' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="confirmation-kv">
+      <div class="kv-item">
+        <span class="kv-label">Respondido em</span>
+        <span class="kv-value">{{ formatDateTime(res.respondedAt) }}</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-label">Sugestão da IA</span>
+        <span class="kv-value">{{ res.usedAiSuggestion ? 'Utilizada' : 'Não utilizada' }}</span>
+      </div>
     </div>
   </div>
 </div>
