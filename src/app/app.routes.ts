@@ -37,6 +37,12 @@ export const routes: Routes = [
         title: 'Égide - Manifestações'
       },
       {
+        path: 'minhas-manifestacoes',
+        loadComponent: () => 
+          import('./pages/my-reports/report-list').then(m => m.MyReports),
+        title: 'Égide - Minhas Manifestações'
+      },
+      {
         path: 'manifestacoes/:id/responder',
         loadComponent: () =>
           import('./pages/report-response/report-response').then(m => m.ReportResponse),

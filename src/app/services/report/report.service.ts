@@ -23,6 +23,10 @@ export class ReportService extends BaseService<ReportDTO> {
     super(http, '/api/v1/report');
   }
 
+  getMyReports(): Observable<ReportDTO[]> {
+  return this.http.get<ReportDTO[]>(`${this.url}/my-reports`);
+}
+
   getStatus(): Observable<any> {
     return this.http.get<any>(`${this.url}/dashboard/status`);
   }
