@@ -10,13 +10,20 @@ import { ReportService } from '../../services/report/report.service';
   styleUrl: './dashboard.css',
 })
 export class Dashboard implements OnInit {
-  status = signal({ total: 0, pendentes: 0, rejeitados: 0, analisados: 0 });
+  status = signal({ 
+    total: 0, 
+    pendentes: 0, 
+    rejeitados: 0, 
+    analisados: 0,
+    mediaAgilidade: 0,
+    mediaResolucao: 0 
+  });
 
   constructor(private reportService: ReportService) {}
 
   ngOnInit() {
     this.reportService.getStatus().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         console.log('Dados recebidos:', data);
         this.status.set(data);
       },

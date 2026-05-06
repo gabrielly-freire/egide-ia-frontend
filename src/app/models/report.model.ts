@@ -5,6 +5,7 @@ export interface ReportDTO {
   description: string;
   status?: string;
   createdAt?: string;
+  hasSurvey?: boolean;
 }
 
 export interface ReportResponseSuggestionResponseDTO {

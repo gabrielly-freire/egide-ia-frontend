@@ -53,7 +53,26 @@
           </div>
           <span class="percentage">{{ status().rejeitados }}</span>
         </div>
-      </div>
     </div>
   </div>
+
+  <div class="stat-card">
+    <div class="stat-icon" style="background: rgba(165, 126, 255, 0.1); color: #a57eff;">
+        <i class="fas fa-bolt"></i>
+    </div>
+    <div class="stat-info">
+        <h3>Média de Agilidade</h3>
+        <p class="stat-value">{{ status().mediaAgilidade | number:'1.1-1' }} / 5.0</p>
+    </div>
+</div>
+
+<div class="stat-card">
+    <div class="stat-icon" style="background: rgba(76, 175, 80, 0.1); color: #4caf50;">
+        <i class="fas fa-check-circle"></i>
+    </div>
+    <div class="stat-info">
+        <h3>Índice de Solução</h3>
+        <p class="stat-value">{{ status().mediaResolucao | number:'1.1-1' }} / 5.0</p>
+    </div>
+</div>
 </div>
