@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BaseService } from '../base/base';
 import {
@@ -56,6 +56,12 @@ export class ReportService extends BaseService<ReportDTO> {
 
     return this.http.post<ReportRespondResponseDTO>(`${this.url}/${reportId}/responder`, body).pipe(
       catchError(err => this.handleError(err))
+    );
+  }
+
+  getResponse(reportId: number | string): Observable<ReportRespondResponseDTO> {
+    return this.http.get<ReportRespondResponseDTO>(`${this.url}/${reportId}/resposta`).pipe(
+      catchError(err => throwError(() => err))
     );
   }
 
