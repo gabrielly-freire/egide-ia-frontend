@@ -58,4 +58,12 @@ export class ReportService extends BaseService<ReportDTO> {
       catchError(err => this.handleError(err))
     );
   }
+
+  submitSurvey(reportId: number, surveyData: {
+    speedRating: number;
+    resolutionRating: number;
+    comments: string;
+  }): Observable<void> {
+    return this.http.post<void>(`${this.url}/${reportId}/survey`, surveyData);
+  }
 }

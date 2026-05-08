@@ -52,6 +52,11 @@
             <button class="btn-view" [routerLink]="['/manifestacoes', report.id, 'responder']">
                 <mat-icon>visibility</mat-icon>
             </button>
+            <button *ngIf="report.status === 'ANALYZED' && !report.hasSurvey" 
+                (click)="openFeedback(report.id!)" 
+                class="btn-feedback" title="Avaliar Atendimento">
+              <mat-icon>grade</mat-icon>
+            </button>
           </td>
         </tr>
         <tr *ngIf="reports().length === 0">
@@ -61,5 +66,43 @@
         </tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<div class="modal" *ngIf="showFeedbackModal">
+  <div class="modal-content feedback-card">
+    <h2>Como foi sua experiência?</h2>
+    <p>Sua opinião ajuda a melhorar o canal de ouvidoria.</p>
+
+    <div class="rating-group">
+      <label>Agilidade no atendimento:</label>
+      <div class="stars">
+        <i *ngFor="let s of [1,2,3,4,5]" 
+           (click)="feedback.speedRating = s"
+           [class.fas]="feedback.speedRating >= s" 
+           [class.far]="feedback.speedRating < s" 
+           class="fa-star"></i>
+      </div>
+    </div>
+
+    <div class="rating-group">
+      <label>Resolução do problema:</label>
+      <div class="stars">
+        <i *ngFor="let s of [1,2,3,4,5]" 
+           (click)="feedback.resolutionRating = s"
+           [class.fas]="feedback.resolutionRating >= s" 
+           [class.far]="feedback.resolutionRating < s" 
+           class="fa-star"></i>
+      </div>
+    </div>
+
+    <textarea [(ngModel)]="feedback.comments" placeholder="Conte-nos mais (opcional)..."></textarea>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="showFeedbackModal = false">Pular</button>
+      <button class="btn-submit" (click)="enviarFeedback()" [disabled]="!feedback.speedRating || !feedback.resolutionRating">
+        Enviar Feedback
+      </button>
+    </div>
   </div>
 </div>
