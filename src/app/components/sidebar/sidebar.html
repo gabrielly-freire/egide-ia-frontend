@@ -3,35 +3,64 @@
 
   <nav style="flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
 
-    <a routerLink="/dashboard"
+    <a *ngIf="hasAnyRole(['LISTENER','GENERAL_LISTENER','MANAGER','ADMIN'])"
+       routerLink="/dashboard"
        routerLinkActive="active-link"
        class="nav-item">
       <i class="pi pi-chart-bar"></i>
       <span>Dashboard</span>
     </a>
 
-    <a routerLink="/minhas-manifestacoes" 
-        routerLinkActive="active-link" 
-        class="nav-item">
+    <a *ngIf="hasAnyRole(['REMONSTRANT','ADMIN'])"
+       routerLink="/minhas-manifestacoes"
+       routerLinkActive="active-link"
+       class="nav-item">
       <i class="pi pi-user"></i>
       <span>Minhas Manifestações</span>
     </a>
 
-    <a routerLink="/manifestacoes"
-       routerLinkActive="active-link"
-       class="nav-item">
-      <i class="pi pi-list"></i>
-      <span>Manifestações</span>
-    </a>
-
-    <a routerLink="/cadastrar-manifestacao"
+    <a *ngIf="hasAnyRole(['REMONSTRANT','ADMIN'])"
+       routerLink="/cadastrar-manifestacao"
        routerLinkActive="active-link"
        class="nav-item">
       <i class="pi pi-plus-circle"></i>
       <span>Nova Manifestação</span>
     </a>
 
-    <a routerLink="/usuarios"
+    <a *ngIf="hasAnyRole(['MANAGER','ADMIN'])"
+       routerLink="/manifestacoes"
+       routerLinkActive="active-link"
+       class="nav-item">
+      <i class="pi pi-list"></i>
+      <span>Manifestações</span>
+    </a>
+
+    <a *ngIf="hasAnyRole(['LISTENER','ADMIN'])"
+       routerLink="/ouvidor/casos"
+       routerLinkActive="active-link"
+       class="nav-item">
+      <i class="pi pi-briefcase"></i>
+      <span>Meus casos (Ouvidor)</span>
+    </a>
+
+    <a *ngIf="hasAnyRole(['LISTENER','ADMIN'])"
+       routerLink="/recurso/casos"
+       routerLinkActive="active-link"
+       class="nav-item">
+      <i class="pi pi-replay"></i>
+      <span>Recursos atribuídos (Ouvidor)</span>
+    </a>
+
+    <a *ngIf="hasAnyRole(['GENERAL_LISTENER','ADMIN'])"
+       routerLink="/ouvidor-geral/casos"
+       routerLinkActive="active-link"
+       class="nav-item">
+      <i class="pi pi-shield"></i>
+      <span>Casos para validar (Ouvidor Geral)</span>
+    </a>
+
+    <a *ngIf="hasAnyRole(['ADMIN'])"
+       routerLink="/usuarios"
        routerLinkActive="active-link"
        class="nav-item">
       <i class="pi pi-users"></i>

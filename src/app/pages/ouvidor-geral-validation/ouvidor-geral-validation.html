@@ -1,0 +1,150 @@
+<div class="container">
+  <div class="header">
+    <div>
+      <span class="subtitle">OUVIDOR GERAL</span>
+      <h1 class="title">Validação do relatório</h1>
+    </div>
+    <a class="btn-secondary" (click)="voltar()" style="cursor: pointer;">Voltar aos casos</a>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Carregando caso...</div>
+
+  <div *ngIf="report() as r" class="card">
+    <div class="card-title">
+      <div>
+        <div class="protocol">Protocolo: {{ r.protocolNumber || ('#EG-' + r.id) }}</div>
+        <div class="report-title">{{ r.title }}</div>
+      </div>
+    </div>
+    <div class="report-desc">{{ r.description }}</div>
+  </div>
+
+  <div *ngIf="finalReport() as fr" class="card">
+    <div class="section-title">Relatório final emitido</div>
+    <div class="confirmation-kv">
+      <div class="kv-item">
+        <span class="kv-label">Ouvidor responsável</span>
+        <span class="kv-value">{{ fr.ouvidorName || '-' }}</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-label">Decisão</span>
+        <span class="kv-value">{{ decisionLabel(fr.decision) }}</span>
+      </div>
+      <div *ngIf="fr.decision === 'ACATAR'" class="kv-item">
+        <span class="kv-label">Penalidade</span>
+        <span class="kv-value">{{ fr.penaltyType || '-' }}</span>
+      </div>
+      <div *ngIf="fr.decision === 'NEGAR'" class="kv-item">
+        <span class="kv-label">Justificativa</span>
+        <span class="kv-value">{{ fr.justification || '-' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card response-card">
+    <div class="section-title">Sua decisão</div>
+
+    <div class="decision-options">
+      <label class="decision-option" [class.selected]="selectedAction() === 'VALIDATE'">
+        <input type="radio" name="action" [checked]="selectedAction() === 'VALIDATE'" (change)="setAction('VALIDATE')" />
+        <div>
+          <strong>Validar</strong>
+          <span class="hint">Mantém o parecer como está. Caso avança para a janela de recurso.</span>
+        </div>
+      </label>
+
+      <label class="decision-option" [class.selected]="selectedAction() === 'ALTER'">
+        <input type="radio" name="action" [checked]="selectedAction() === 'ALTER'" (change)="setAction('ALTER')" />
+        <div>
+          <strong>Alterar parecer</strong>
+          <span class="hint">Registra um novo parecer; o original fica preservado no histórico.</span>
+        </div>
+      </label>
+
+      <label class="decision-option"
+             [class.selected]="selectedAction() === 'REPASS'"
+             [class.disabled]="!canRepass">
+        <input type="radio"
+               name="action"
+               [disabled]="!canRepass"
+               [checked]="selectedAction() === 'REPASS'"
+               (change)="setAction('REPASS')" />
+        <div>
+          <strong>Repassar</strong>
+          <span class="hint" *ngIf="canRepass">Designa um novo ouvidor (diferente dos que já tocaram o caso). Permitido apenas 1× por caso.</span>
+          <span class="hint" *ngIf="!canRepass">Este caso já consumiu o repass disponível (regra de não-loop).</span>
+        </div>
+      </label>
+    </div>
+
+    <form *ngIf="selectedAction() === 'ALTER'" [formGroup]="alterForm" class="form-block">
+      <label class="field">
+        <span class="field-label">Nova decisão *</span>
+        <select formControlName="alteredDecision" class="select">
+          <option value="ACATAR">Acatar denúncia</option>
+          <option value="NEGAR">Negar denúncia</option>
+        </select>
+      </label>
+
+      <ng-container *ngIf="alterForm.value.alteredDecision === 'ACATAR'">
+        <label class="field">
+          <span class="field-label">Tipo de penalidade *</span>
+          <select formControlName="alteredPenaltyType" class="select">
+            <option *ngFor="let opt of penaltyOptions" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label">Descrição (opcional)</span>
+          <textarea formControlName="alteredPenaltyDescription" rows="3" class="textarea"></textarea>
+        </label>
+      </ng-container>
+
+      <ng-container *ngIf="alterForm.value.alteredDecision === 'NEGAR'">
+        <label class="field">
+          <span class="field-label">Nova justificativa *</span>
+          <textarea formControlName="alteredJustification" rows="5" class="textarea"></textarea>
+        </label>
+      </ng-container>
+    </form>
+
+    <div *ngIf="serverError()" class="error">{{ serverError() }}</div>
+
+    <div class="actions">
+      <button type="button" class="btn-primary" [disabled]="submitting()" (click)="submit()">
+        <ng-container [ngSwitch]="selectedAction()">
+          <ng-container *ngSwitchCase="'VALIDATE'">Confirmar validação</ng-container>
+          <ng-container *ngSwitchCase="'ALTER'">Confirmar alteração</ng-container>
+          <ng-container *ngSwitchCase="'REPASS'">Confirmar repass</ng-container>
+        </ng-container>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="result() as res" class="card confirmation-card">
+    <div class="confirmation-header">
+      <div class="confirmation-title">
+        <div class="section-title">Ação registrada</div>
+        <div class="confirmation-subtitle">{{ res.decidedAt | date: 'dd/MM/yyyy HH:mm' }}</div>
+      </div>
+      <div class="confirmation-badges">
+        <span class="badge badge-status">{{ res.reportStatus }}</span>
+        <span class="badge">{{ res.action }}</span>
+      </div>
+    </div>
+
+    <div class="confirmation-kv">
+      <div *ngIf="res.action === 'REPASS'" class="kv-item">
+        <span class="kv-label">Novo Ouvidor</span>
+        <span class="kv-value">{{ res.repassNewOuvidorName || '-' }}</span>
+      </div>
+      <div *ngIf="res.action === 'ALTER'" class="kv-item">
+        <span class="kv-label">Nova decisão</span>
+        <span class="kv-value">{{ decisionLabel(res.alteredDecision) }}</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-label">Repasses até aqui</span>
+        <span class="kv-value">{{ res.repassCountAfter }} / 1</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+<div class="list-container">
+  <div class="page-header">
+    <div>
+      <span class="subtitle">PAINEL DO OUVIDOR GERAL</span>
+      <h1 class="title">Casos para validar</h1>
+    </div>
+  </div>
+
+  <div class="summary-cards">
+    <div class="card">
+      <span class="card-label">TOTAL</span>
+      <div class="card-value">{{ cases().length }}</div>
+      <span class="card-desc">Pendentes de validação</span>
+    </div>
+    <div class="card">
+      <span class="card-label">RELATÓRIOS FINAIS</span>
+      <div class="card-value">{{ finalReportsCount() }}</div>
+    </div>
+    <div class="card">
+      <span class="card-label">RELATÓRIOS DE RECURSO</span>
+      <div class="card-value">{{ appealReportsCount() }}</div>
+    </div>
+    <div class="card">
+      <span class="card-label">JÁ REPASSADOS 1×</span>
+      <div class="card-value">{{ repassedCount() }}</div>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Carregando casos...</div>
+  <div *ngIf="error()" class="error">{{ error() }}</div>
+
+  <div class="table-container" *ngIf="!loading() && !error()">
+    <div class="table-header">
+      <h2>CASOS PENDENTES</h2>
+    </div>
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>PROTOCOLO / TÍTULO</th>
+          <th>ORIGEM</th>
+          <th>DECISÃO</th>
+          <th>SITUAÇÃO</th>
+          <th>REPASSE</th>
+          <th>SUBMETIDO EM</th>
+          <th>AÇÕES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of cases()">
+          <td>
+            <span class="report-protocol">{{ c.protocolNumber }}</span>
+            <div class="report-title">{{ c.title }}</div>
+          </td>
+          <td>
+            <span class="status-badge" [class.status-issued]="!c.isAppealReport" [class.status-appeal]="c.isAppealReport">
+              {{ c.isAppealReport ? 'Recurso' : 'Relatório final' }}
+            </span>
+          </td>
+          <td>{{ decisionLabel(c.pendingDecision) }}</td>
+          <td>{{ statusLabel(c.status) }}</td>
+          <td>
+            <span *ngIf="c.repassCount > 0" class="repass-badge">Já repassado</span>
+            <span *ngIf="c.repassCount === 0" class="repass-badge available">Disponível</span>
+          </td>
+          <td>{{ c.pendingSubmittedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <a class="btn-view"
+               [routerLink]="['/ouvidor-geral/casos', c.id]"
+               title="Abrir caso para validar / alterar / repassar">
+              <mat-icon>gavel</mat-icon>
+            </a>
+          </td>
+        </tr>
+        <tr *ngIf="cases().length === 0">
+          <td colspan="7" style="text-align: center; padding: 40px; color: #94a3b8;">
+            Nenhum caso pendente de validação.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

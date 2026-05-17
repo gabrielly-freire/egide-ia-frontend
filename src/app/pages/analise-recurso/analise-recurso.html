@@ -1,0 +1,118 @@
+<div class="container">
+  <div class="header">
+    <div>
+      <span class="subtitle">Novo Ouvidor</span>
+      <h1 class="title">Análise de recurso</h1>
+    </div>
+    <a class="btn-secondary" routerLink="/recurso/casos">Voltar</a>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Carregando caso...</div>
+
+  <div class="card anti-bias-banner">
+    <strong>Análise sem viés.</strong>
+    Você está vendo apenas a manifestação, as provas (originais + novas do recurso) e os
+    fundamentos da(s) parte(s) recorrente(s). Pareceres anteriores não são exibidos.
+  </div>
+
+  <div *ngIf="caseInfo() as c" class="card">
+    <div class="card-title">
+      <div>
+        <div class="protocol">Protocolo: {{ c.protocolNumber }}</div>
+        <div class="report-title">{{ c.title }}</div>
+      </div>
+    </div>
+    <div class="report-desc">{{ c.description }}</div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Recurso(s) apresentado(s)</div>
+    <div *ngIf="appeals().length === 0" class="empty">Nenhum recurso encontrado.</div>
+    <div *ngFor="let a of appeals()" class="appeal-block">
+      <div class="appeal-head">
+        <span class="badge">{{ a.appellantRole }}</span>
+        <span class="appeal-meta">{{ a.appellantName }} · {{ a.submittedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <pre class="appeal-grounds">{{ a.grounds }}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Provas (originais + novas dos recursos)</div>
+    <div *ngIf="proofs().length === 0" class="empty">Nenhuma prova anexada.</div>
+    <div *ngFor="let p of proofs()" class="proof-row">
+      <div class="proof-info">
+        <a [href]="previewUrl(p)" target="_blank" class="proof-name">
+          <span>{{ p.name }}</span>
+        </a>
+        <span class="proof-meta">{{ p.contentType }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card response-card">
+    <div class="section-title">Decisão do relatório do recurso</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="decision-options">
+        <label class="decision-option" [class.selected]="currentDecision === 'ACATAR'">
+          <input type="radio" formControlName="decision" value="ACATAR" />
+          <div>
+            <strong>Acatar</strong>
+            <span class="hint">Informe a penalidade proposta.</span>
+          </div>
+        </label>
+        <label class="decision-option" [class.selected]="currentDecision === 'NEGAR'">
+          <input type="radio" formControlName="decision" value="NEGAR" />
+          <div>
+            <strong>Negar</strong>
+            <span class="hint">Informe a justificativa.</span>
+          </div>
+        </label>
+      </div>
+
+      <div *ngIf="currentDecision === 'ACATAR'" class="form-block">
+        <label class="field">
+          <span class="field-label">Tipo de penalidade *</span>
+          <select formControlName="penaltyType" class="select">
+            <option *ngFor="let opt of penaltyOptions" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label">Descrição (opcional)</span>
+          <textarea formControlName="penaltyDescription" rows="3" class="textarea"></textarea>
+        </label>
+      </div>
+
+      <div *ngIf="currentDecision === 'NEGAR'" class="form-block">
+        <label class="field">
+          <span class="field-label">Justificativa *</span>
+          <textarea formControlName="justification" rows="6" class="textarea"></textarea>
+        </label>
+      </div>
+
+      <div *ngIf="serverError()" class="error">{{ serverError() }}</div>
+
+      <div class="actions">
+        <button type="submit" class="btn-primary" [disabled]="submitting()">
+          {{ submitting() ? 'Enviando...' : 'Submeter relatório do recurso' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="result() as res" class="card confirmation-card">
+    <div class="confirmation-header">
+      <div class="confirmation-title">
+        <div class="section-title">Relatório do recurso submetido</div>
+        <div class="confirmation-subtitle">
+          Aguardando validação do Ouvidor Geral · {{ res.submittedAt | date: 'dd/MM/yyyy HH:mm' }}
+        </div>
+      </div>
+      <div class="confirmation-badges">
+        <span class="badge badge-status">{{ res.reportStatus }}</span>
+        <span class="badge">{{ res.decision }}</span>
+      </div>
+    </div>
+  </div>
+</div>

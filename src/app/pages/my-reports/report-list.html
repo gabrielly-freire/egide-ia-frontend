@@ -44,16 +44,18 @@
           </td>
           <td>
             <span class="status-badge" [ngClass]="getStatusClass(report.status)">
-              {{ report.status || 'PENDENTE' }}
+              {{ statusLabel(report.status) }}
             </span>
           </td>
           <td>{{report.createdAt}}</td>
           <td>
-            <button class="btn-view" [routerLink]="['/manifestacoes', report.id, 'responder']">
-                <mat-icon>visibility</mat-icon>
+            <button *ngIf="report.status === 'GENERAL_VALIDATED'"
+                [routerLink]="['/manifestacoes', report.id, 'recurso']"
+                class="btn-view" title="Abrir recurso">
+              <mat-icon>gavel</mat-icon>
             </button>
-            <button *ngIf="report.status === 'ANALYZED' && !report.hasSurvey" 
-                (click)="openFeedback(report.id!)" 
+            <button *ngIf="report.status === 'ANALYZED' && !report.hasSurvey"
+                (click)="openFeedback(report.id!)"
                 class="btn-feedback" title="Avaliar Atendimento">
               <mat-icon>grade</mat-icon>
             </button>
