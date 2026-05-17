@@ -1,0 +1,176 @@
+<div class="container">
+  <div class="header">
+    <div>
+      <span class="subtitle">PAINEL DO OUVIDOR</span>
+      <h1 class="title">Parecer Preliminar</h1>
+    </div>
+    <a class="btn-secondary" routerLink="/ouvidor/casos">Voltar aos meus casos</a>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Carregando o caso...</div>
+
+  <div *ngIf="report() as r" class="card">
+    <div class="card-title">
+      <div>
+        <div class="protocol">Protocolo: {{ r.protocolNumber || ('#EG-' + r.id + '-2026') }}</div>
+        <div class="report-title">{{ r.title }}</div>
+      </div>
+      <span class="badge badge-status">{{ statusLabel(r.status) }}</span>
+    </div>
+    <div class="report-desc">{{ r.description }}</div>
+  </div>
+
+  <div *ngIf="suggestion() as s" class="card ai-card">
+    <div class="response-header">
+      <div>
+        <div class="section-title">Sugestão da IA</div>
+        <div class="response-meta">
+          <span>Use, ajuste ou desconsidere antes de emitir o parecer.</span>
+        </div>
+      </div>
+      <button type="button" class="btn-secondary" (click)="useSuggestion()">
+        Inserir sugestão no parecer
+      </button>
+    </div>
+    <pre class="ai-suggestion">{{ s.suggestedResponse }}</pre>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Provas anexadas pelo denunciante</div>
+    <p class="hint">Registre uma observação por prova. Suas observações ficam vinculadas ao parecer preliminar.</p>
+
+    <div *ngIf="proofs().length === 0" class="empty">Nenhuma prova anexada.</div>
+
+    <div *ngFor="let p of proofs()" class="proof-row">
+      <div class="proof-info">
+        <a [href]="previewUrl(p.file)" target="_blank" class="proof-name">
+          <span>{{ p.file.name }}</span>
+        </a>
+        <span class="proof-meta">{{ p.file.contentType }} · {{ fileSizeLabel(p.file.size) }}</span>
+        <span *ngIf="p.savedAt" class="proof-saved">Salva em {{ formatDateTime(p.savedAt) }}</span>
+      </div>
+      <textarea
+        rows="3"
+        class="textarea small"
+        placeholder="Observação do ouvidor sobre esta prova"
+        [value]="p.observation"
+        (input)="updateObservation(p.file.id, $any($event.target).value)">
+      </textarea>
+      <div class="proof-actions">
+        <button type="button"
+                class="btn-secondary small"
+                [disabled]="p.saving"
+                (click)="saveObservation(p)">
+          {{ p.saving ? 'Salvando...' : (p.savedAt ? 'Atualizar' : 'Salvar') }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card response-card">
+    <div class="section-title">Decisão do parecer preliminar</div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="decision-options">
+        <label class="decision-option" [class.selected]="currentDecision === 'ACATAR'">
+          <input type="radio" formControlName="decision" value="ACATAR" />
+          <div>
+            <strong>{{ decisionLabel('ACATAR') }}</strong>
+            <span class="hint">{{ decisionHint('ACATAR') }}</span>
+          </div>
+        </label>
+
+        <label class="decision-option" [class.selected]="currentDecision === 'NEGAR'">
+          <input type="radio" formControlName="decision" value="NEGAR" />
+          <div>
+            <strong>{{ decisionLabel('NEGAR') }}</strong>
+            <span class="hint">{{ decisionHint('NEGAR') }}</span>
+          </div>
+        </label>
+
+        <label class="decision-option" [class.selected]="currentDecision === 'NEGAR_FALTA_PROVAS'">
+          <input type="radio" formControlName="decision" value="NEGAR_FALTA_PROVAS" />
+          <div>
+            <strong>{{ decisionLabel('NEGAR_FALTA_PROVAS') }}</strong>
+            <span class="hint">{{ decisionHint('NEGAR_FALTA_PROVAS') }}</span>
+          </div>
+        </label>
+      </div>
+
+      <div *ngIf="currentDecision === 'ACATAR'" class="form-block">
+        <label class="field">
+          <span class="field-label">Tipo de penalidade *</span>
+          <select formControlName="penaltyType" class="select">
+            <option *ngFor="let opt of penaltyOptions" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="field-label">Descrição da penalidade (opcional)</span>
+          <textarea
+            formControlName="penaltyDescription"
+            rows="4"
+            class="textarea"
+            placeholder="Detalhe a penalidade proposta"></textarea>
+        </label>
+      </div>
+
+      <div *ngIf="currentDecision !== 'ACATAR'" class="form-block">
+        <label class="field">
+          <span class="field-label">Justificativa *</span>
+          <textarea
+            formControlName="justification"
+            rows="6"
+            class="textarea"
+            placeholder="Explique a decisão"></textarea>
+        </label>
+      </div>
+
+      <div *ngIf="serverError()" class="error">{{ serverError() }}</div>
+
+      <div class="actions">
+        <button type="submit" class="btn-primary" [disabled]="submitting()">
+          {{ existingPreliminary() ? 'Atualizar parecer' : 'Emitir parecer preliminar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="(result() ?? existingPreliminary()) as res" class="card confirmation-card">
+    <div class="confirmation-header">
+      <div class="confirmation-title">
+        <div class="section-title">Parecer registrado</div>
+        <div class="confirmation-subtitle">
+          {{ result() ? 'Parecer emitido com sucesso.' : 'Parecer já emitido para este caso.' }}
+        </div>
+      </div>
+      <div class="confirmation-badges">
+        <span class="badge badge-status">{{ statusLabel(res.reportStatus) }}</span>
+        <span class="badge"
+              [class.badge-ai]="res.decision === 'ACATAR'"
+              [class.badge-manual]="res.decision !== 'ACATAR'">
+          {{ decisionLabel(res.decision) }}
+        </span>
+      </div>
+    </div>
+
+    <div class="confirmation-kv">
+      <div class="kv-item">
+        <span class="kv-label">Submetido em</span>
+        <span class="kv-value">{{ formatDateTime(res.submittedAt) }}</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-label">Ouvidor</span>
+        <span class="kv-value">{{ res.ouvidorName || '-' }}</span>
+      </div>
+      <div *ngIf="res.decision === 'ACATAR'" class="kv-item">
+        <span class="kv-label">Penalidade</span>
+        <span class="kv-value">{{ res.penaltyType || '-' }}</span>
+      </div>
+      <div *ngIf="res.decision !== 'ACATAR'" class="kv-item">
+        <span class="kv-label">Justificativa</span>
+        <span class="kv-value">{{ res.justification ? (res.justification | slice:0:120) : '-' }}{{ (res.justification?.length || 0) > 120 ? '...' : '' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

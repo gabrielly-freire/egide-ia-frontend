@@ -23,18 +23,21 @@ export class MyReports implements OnInit {
     comments: ''
   };
 
-  reportsInAnalysis = computed(() => 
+  private static readonly CLOSED_STATUSES = new Set([
+    'CLOSED', 'CLOSED_NO_PROOFS', 'REJECTED', 'RESPONDED'
+  ]);
+
+  reportsInAnalysis = computed(() =>
     this.reports().filter(r => {
-      const s = r.status?.toUpperCase();
-      return s === 'PENDING' || s === 'PENDENTE';
+      const s = r.status?.toUpperCase() ?? '';
+      return s !== '' && !MyReports.CLOSED_STATUSES.has(s);
     }).length
   );
 
-  reportsCompleted = computed(() => 
-    this.reports().filter(r => {
-      const s = r.status?.toUpperCase();
-      return s === 'ANALYZED' || s === 'ANALISADO';
-    }).length
+  reportsCompleted = computed(() =>
+    this.reports().filter(r =>
+      MyReports.CLOSED_STATUSES.has(r.status?.toUpperCase() ?? '')
+    ).length
   );
 
   constructor(private reportService: ReportService) {}
@@ -48,10 +51,28 @@ export class MyReports implements OnInit {
   }
 
   getStatusClass(status: string | undefined): string {
-    const s = status?.toUpperCase();
-    if (s === 'PENDING' || s === 'PENDENTE') return 'status-analysis';
-    if (s === 'ANALYZED' || s === 'ANALISADO') return 'status-completed';
+    const s = status?.toUpperCase() ?? '';
+    if (MyReports.CLOSED_STATUSES.has(s)) return 'status-completed';
     return 'status-analysis';
+  }
+
+  statusLabel(status: string | undefined): string {
+    switch (status?.toUpperCase()) {
+      case 'PENDING':                  return 'Pendente';
+      case 'ANALYZED':                 return 'Analisado pela IA';
+      case 'PRELIMINARY_ISSUED':       return 'Parecer preliminar emitido';
+      case 'CLOSED_NO_PROOFS':         return 'Encerrado (falta de provas)';
+      case 'DEFENSE_OPEN':             return 'Em defesa';
+      case 'DEFENSE_UNDER_ANALYSIS':   return 'Defesa em análise';
+      case 'FINAL_ISSUED':             return 'Relatório final emitido';
+      case 'REPASSED':                 return 'Repassado para novo ouvidor';
+      case 'GENERAL_VALIDATED':        return 'Validado pelo Ouvidor Geral';
+      case 'APPEAL_OPEN':              return 'Recurso aberto';
+      case 'APPEAL_UNDER_ANALYSIS':    return 'Recurso em análise';
+      case 'APPEAL_AWAITING_GENERAL':  return 'Recurso aguardando OG';
+      case 'CLOSED':                   return 'Encerrado';
+      default:                         return status ?? 'Pendente';
+    }
   }
 
   openFeedback(reportId: number) {

@@ -4,6 +4,6 @@ export interface User {
   username: string;
   password: string;
   name: string;
-  role: 'REMONSTRANT' | 'LISTENER' | 'MANAGER' | 'ADMIN';
+  role: 'REMONSTRANT' | 'LISTENER' | 'GENERAL_LISTENER' | 'MANAGER' | 'ADMIN';
   departmentId: number;
 }

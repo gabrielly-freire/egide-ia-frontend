@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth/auth.service';
+import { landingRouteFor } from '../../services/auth/role-routes';
 
 @Component({
   selector: 'app-login',
@@ -32,7 +33,7 @@ export class Login {
     if (this.authService.hasToken()) {
       this.authService.restoreSession().subscribe(user => {
         if (user) {
-          this.router.navigateByUrl('/dashboard');
+          this.router.navigateByUrl(landingRouteFor(user.role));
         }
       });
     }
@@ -58,8 +59,8 @@ export class Login {
       })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: () => {
-          this.router.navigateByUrl('/dashboard');
+        next: user => {
+          this.router.navigateByUrl(landingRouteFor(user.role));
         },
         error: (error: Error) => {
           this.authError.set(error.message);

@@ -1,0 +1,87 @@
+<div class="container">
+  <div class="header">
+    <div>
+      <span class="subtitle">RECURSO</span>
+      <h1 class="title">Abrir recurso</h1>
+    </div>
+    <a class="btn-secondary" routerLink="/manifestacoes">Voltar</a>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Carregando caso...</div>
+
+  <div *ngIf="report() as r" class="card">
+    <div class="card-title">
+      <div>
+        <div class="protocol">Protocolo: {{ r.protocolNumber || ('#EG-' + r.id) }}</div>
+        <div class="report-title">{{ r.title }}</div>
+      </div>
+      <span class="badge badge-status">{{ r.status }}</span>
+    </div>
+    <div class="report-desc">{{ r.description }}</div>
+  </div>
+
+  <div *ngIf="existingAppeals().length > 0" class="card">
+    <div class="section-title">Recursos já abertos neste caso</div>
+    <ul class="appeal-list">
+      <li *ngFor="let a of existingAppeals()">
+        <strong>{{ a.appellantRole }}</strong> — {{ a.appellantName || '-' }}
+        · Status: <em>{{ a.status }}</em>
+        · {{ a.submittedAt | date: 'dd/MM/yyyy HH:mm' }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="card response-card">
+    <div class="section-title">Fundamentos do recurso</div>
+    <p class="hint">{{ statusHint() }}</p>
+    <p class="hint">
+      Após registrar o recurso, anexe as <strong>novas provas</strong> em chamada de upload separada
+      (referenciando o recurso). Sem novas provas o recurso não tem efeito.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label class="field">
+        <span class="field-label">Descreva por que está recorrendo *</span>
+        <textarea
+          formControlName="grounds"
+          rows="8"
+          class="textarea"
+          placeholder="Argumentos, novos elementos de prova, contestação da decisão..."
+          [disabled]="!canAppeal() || submitting()">
+        </textarea>
+      </label>
+
+      <div *ngIf="serverError()" class="error">{{ serverError() }}</div>
+
+      <div class="actions">
+        <button type="submit" class="btn-primary" [disabled]="!canAppeal() || submitting()">
+          {{ submitting() ? 'Registrando...' : 'Registrar recurso' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="result() as res" class="card confirmation-card">
+    <div class="confirmation-header">
+      <div class="confirmation-title">
+        <div class="section-title">Recurso registrado</div>
+        <div class="confirmation-subtitle">{{ res.submittedAt | date: 'dd/MM/yyyy HH:mm' }}</div>
+      </div>
+      <div class="confirmation-badges">
+        <span class="badge badge-status">{{ res.status }}</span>
+        <span class="badge">{{ res.appellantRole }}</span>
+      </div>
+    </div>
+
+    <div class="confirmation-kv">
+      <div class="kv-item">
+        <span class="kv-label">Novo Ouvidor designado</span>
+        <span class="kv-value">{{ res.newOuvidorName || 'A designar' }}</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-label">Recorrente</span>
+        <span class="kv-value">{{ res.appellantName }}</span>
+      </div>
+    </div>
+  </div>
+</div>

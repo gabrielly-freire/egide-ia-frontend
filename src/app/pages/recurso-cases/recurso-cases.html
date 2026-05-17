@@ -1,0 +1,45 @@
+<div class="list-container">
+  <div class="page-header">
+    <div>
+      <span class="subtitle">OUVIDOR · RECURSOS</span>
+      <h1 class="title">Recursos atribuídos a mim</h1>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Carregando recursos...</div>
+  <div *ngIf="error()" class="error">{{ error() }}</div>
+
+  <div class="table-container" *ngIf="!loading() && !error()">
+    <div class="table-header">
+      <h2>RECURSOS PARA ANÁLISE</h2>
+    </div>
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>PROTOCOLO / TÍTULO</th>
+          <th>STATUS</th>
+          <th>AÇÕES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of cases()">
+          <td>
+            <span class="report-protocol">{{ c.protocolNumber }}</span>
+            <div class="report-title">{{ c.title }}</div>
+          </td>
+          <td>{{ statusLabel(c.status) }}</td>
+          <td>
+            <a class="btn-view" [routerLink]="['/recurso/analise', c.id]" title="Analisar recurso">
+              <mat-icon>edit_note</mat-icon>
+            </a>
+          </td>
+        </tr>
+        <tr *ngIf="cases().length === 0">
+          <td colspan="3" style="text-align: center; padding: 40px; color: #94a3b8;">
+            Nenhum recurso atribuído a você no momento.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

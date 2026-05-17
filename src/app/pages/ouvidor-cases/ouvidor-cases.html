@@ -1,0 +1,77 @@
+<div class="list-container">
+  <div class="page-header">
+    <div>
+      <span class="subtitle">PAINEL DO OUVIDOR</span>
+      <h1 class="title">Meus casos atribuídos</h1>
+    </div>
+  </div>
+
+  <div class="summary-cards">
+    <div class="card">
+      <span class="card-label">TOTAL</span>
+      <div class="card-value">{{ cases().length }}</div>
+      <span class="card-desc">Casos sob sua responsabilidade</span>
+    </div>
+    <div class="card">
+      <span class="card-label">PENDENTES DE PARECER</span>
+      <div class="card-value">{{ pendingAnalysis() }}</div>
+    </div>
+    <div class="card">
+      <span class="card-label">PARECERES EMITIDOS</span>
+      <div class="card-value">{{ issued() }}</div>
+    </div>
+    <div class="card">
+      <span class="card-label">ENCERRADOS (SEM PROVAS)</span>
+      <div class="card-value">{{ closedNoProofs() }}</div>
+    </div>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Carregando seus casos...</div>
+  <div *ngIf="error()" class="error">{{ error() }}</div>
+
+  <div class="table-container" *ngIf="!loading() && !error()">
+    <div class="table-header">
+      <h2>CASOS DESIGNADOS</h2>
+    </div>
+    <table class="report-table">
+      <thead>
+        <tr>
+          <th>PROTOCOLO / TÍTULO</th>
+          <th>CATEGORIA</th>
+          <th>RISCO</th>
+          <th>STATUS</th>
+          <th>RECEBIDO EM</th>
+          <th>AÇÕES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of cases()">
+          <td>
+            <span class="report-protocol">{{ c.protocolNumber }}</span>
+            <div class="report-title">{{ c.title }}</div>
+          </td>
+          <td>{{ c.category || '-' }}</td>
+          <td>
+            <span class="risk-badge" [ngClass]="riskClass(c.risk)">{{ riskLabel(c.risk) }}</span>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="statusClass(c.status)">{{ statusLabel(c.status) }}</span>
+          </td>
+          <td>{{ c.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <a class="btn-view"
+               [routerLink]="['/manifestacoes', c.id, 'parecer-preliminar']"
+               title="Abrir caso para emitir parecer">
+              <mat-icon>edit_note</mat-icon>
+            </a>
+          </td>
+        </tr>
+        <tr *ngIf="cases().length === 0">
+          <td colspan="6" style="text-align: center; padding: 40px; color: #94a3b8;">
+            Nenhum caso atribuído a você no momento.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
