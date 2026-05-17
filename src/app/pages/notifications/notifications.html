@@ -1,0 +1,40 @@
+<div class="page">
+  <div class="header">
+    <div class="title">
+      <h1>Notificações</h1>
+      <span class="count" *ngIf="unreadCount() > 0">{{ unreadCount() }} não lidas</span>
+    </div>
+
+    <button class="btn" (click)="markAllAsRead()" [disabled]="unreadCount() <= 0">
+      Marcar todas como lidas
+    </button>
+  </div>
+
+  <div class="loading" *ngIf="loading()">Carregando...</div>
+
+  <div class="empty" *ngIf="!loading() && notifications().length === 0">
+    Nenhuma notificação.
+  </div>
+
+  <div class="list" *ngIf="notifications().length > 0">
+    <div
+      class="item"
+      *ngFor="let n of notifications()"
+      [class.unread]="!n.readAt"
+      (click)="markAsRead(n)"
+    >
+      <div class="icon">
+        <mat-icon>{{ n.readAt ? 'notifications' : 'notifications_active' }}</mat-icon>
+      </div>
+
+      <div class="content">
+        <div class="item-title">{{ n.title }}</div>
+        <div class="item-message" *ngIf="n.message">{{ n.message }}</div>
+        <div class="meta">
+          <span *ngIf="n.createdAt">{{ n.createdAt }}</span>
+          <span *ngIf="n.reportId">• Manifestação #{{ n.reportId }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

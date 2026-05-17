@@ -1,0 +1,77 @@
+<div class="page">
+  <a routerLink="/manifestacoes" class="back">← Voltar</a>
+
+  <div *ngIf="loading()">Carregando...</div>
+
+  <div *ngIf="!loading() && report() as r" class="content">
+    <h2>{{ r.protocolNumber }} — {{ r.title }}</h2>
+    <div class="meta">Status: {{ r.status }}</div>
+    <p class="desc">{{ r.description }}</p>
+
+    <h3>Provas anexadas pelo denunciante</h3>
+    <div *ngIf="proofs().length === 0" class="empty">Nenhum arquivo anexado.</div>
+    <ul *ngIf="proofs().length > 0" class="files">
+      <li *ngFor="let f of proofs()">
+        <a [href]="fileDownloadUrl(f.id)" target="_blank" rel="noopener">
+          {{ f.name }} ({{ f.contentType }}, {{ f.size }} bytes)
+        </a>
+      </li>
+    </ul>
+
+    <h3>Defesa do denunciado</h3>
+    <div *ngIf="!defense()" class="empty">Defesa ainda não enviada.</div>
+
+    <div *ngIf="defense() as d" class="defense">
+      <div class="meta">Enviada em: {{ d.submittedAt }}</div>
+      <p class="desc">{{ d.defenseText }}</p>
+
+      <h4>Provas anexadas pelo denunciado</h4>
+      <div *ngIf="d.files.length === 0" class="empty">Nenhum arquivo anexado.</div>
+      <ul *ngIf="d.files.length > 0" class="files">
+        <li *ngFor="let f of d.files">
+          <a [href]="fileDownloadUrl(f.id)" target="_blank" rel="noopener">
+            {{ f.name }} ({{ f.contentType }}, {{ f.size }} bytes)
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <h3>Relatório final</h3>
+    <form [formGroup]="form" (ngSubmit)="submitFinalReport()" class="form">
+      <label class="label">
+        Decisão
+        <select formControlName="decision">
+          <option value="ACATAR">Acatar</option>
+          <option value="NEGAR">Negar</option>
+        </select>
+      </label>
+
+      <label class="label">
+        Justificativa / Conclusão
+        <textarea formControlName="justification" rows="6"></textarea>
+      </label>
+
+      <label class="label">
+        Tipo de penalidade (se aplicável)
+        <select formControlName="penaltyType">
+          <option [ngValue]="null">Nenhuma</option>
+          <option value="ADVERTENCIA">Advertência</option>
+          <option value="SUSPENSAO">Suspensão</option>
+          <option value="DEMISSAO">Demissão</option>
+          <option value="OUTRA">Outra</option>
+        </select>
+      </label>
+
+      <label class="label">
+        Descrição da penalidade (se aplicável)
+        <textarea formControlName="penaltyDescription" rows="3"></textarea>
+      </label>
+
+      <button type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Enviando...' : 'Emitir relatório final' }}
+      </button>
+    </form>
+
+    <div *ngIf="message()" class="result">{{ message() }}</div>
+  </div>
+</div>

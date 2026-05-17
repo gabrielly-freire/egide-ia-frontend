@@ -27,6 +27,14 @@
       <span>Nova Manifestação</span>
     </a>
 
+    <a *ngIf="hasAnyRole(['REMONSTRANT','LISTENER','GENERAL_LISTENER','MANAGER','ADMIN'])"
+       routerLink="/defesa/casos"
+       routerLinkActive="active-link"
+       class="nav-item">
+      <i class="pi pi-briefcase"></i>
+      <span>Casos contra mim</span>
+    </a>
+
     <a *ngIf="hasAnyRole(['MANAGER','ADMIN'])"
        routerLink="/manifestacoes"
        routerLinkActive="active-link"

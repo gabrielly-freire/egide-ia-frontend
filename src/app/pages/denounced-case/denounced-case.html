@@ -1,0 +1,54 @@
+<div class="page">
+  <a routerLink="/defesa/casos" class="back">← Voltar</a>
+
+  <div *ngIf="loading()">Carregando...</div>
+
+  <div *ngIf="!loading() && !caseData()" class="empty">
+    Caso não encontrado ou não disponível para o denunciado.
+  </div>
+
+  <div *ngIf="!loading() && caseData() as c" class="content">
+    <h2>{{ c.protocolNumber }} — {{ c.title }}</h2>
+    <div class="meta">Status: {{ c.status }}</div>
+    <p class="desc">{{ c.description }}</p>
+
+    <h3>Parecer preliminar</h3>
+    <div *ngIf="!c.preliminaryReport" class="empty">Parecer preliminar não disponível.</div>
+    <div *ngIf="c.preliminaryReport as p" class="prelim">
+      <div class="meta">Decisão: {{ p.decision }}</div>
+      <div class="meta" *ngIf="p.submittedAt">Emitido em: {{ p.submittedAt }}</div>
+      <p class="desc" *ngIf="p.justification">{{ p.justification }}</p>
+      <div class="meta" *ngIf="p.penaltyType">Penalidade: {{ p.penaltyType }}</div>
+      <p class="desc" *ngIf="p.penaltyDescription">{{ p.penaltyDescription }}</p>
+    </div>
+
+    <h3>Provas anexadas pelo denunciante</h3>
+    <div *ngIf="c.evidenceFiles.length === 0" class="empty">Nenhum arquivo anexado.</div>
+    <ul *ngIf="c.evidenceFiles.length > 0" class="files">
+      <li *ngFor="let f of c.evidenceFiles">
+        <a [href]="fileDownloadUrl(f.id)" target="_blank" rel="noopener">
+          {{ f.name }} ({{ f.contentType }}, {{ f.size }} bytes)
+        </a>
+      </li>
+    </ul>
+
+    <h3>Enviar defesa</h3>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <label class="label">
+        Texto da defesa
+        <textarea formControlName="defenseText" rows="8"></textarea>
+      </label>
+
+      <label class="label">
+        Provas (opcional)
+        <input type="file" (change)="onFilesSelected($event)" multiple />
+      </label>
+
+      <button type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Enviando...' : 'Enviar defesa' }}
+      </button>
+    </form>
+
+    <div *ngIf="resultMessage()" class="result">{{ resultMessage() }}</div>
+  </div>
+</div>

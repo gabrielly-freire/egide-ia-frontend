@@ -3,8 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BaseService } from '../base/base';
-import { FileDTO, OuvidorCaseDTO, PreliminaryReportRequestDTO, PreliminaryReportResponseDTO, ProofObservationRequestDTO, ProofObservationResponseDTO, ReportDTO, ReportResponseSuggestionResponseDTO } from '../../models/report.model';
+import {
+  FileDTO,
+  OuvidorCaseDTO,
+  PreliminaryReportRequestDTO,
+  PreliminaryReportResponseDTO,
+  ProofObservationRequestDTO,
+  ProofObservationResponseDTO,
+  ReportDTO,
+  ReportResponseSuggestionResponseDTO
+} from '../../models/report.model';
 import { FinalReportRequestDTO, FinalReportResponseDTO } from '../../models/final-report.model';
+import { DefenseDTO, DefenseRequestDTO, DenouncedCaseDTO } from '../../models/defense.model';
 
 interface ReportResponseSuggestionApiDTO {
   report_id: number;
@@ -102,5 +112,35 @@ export class ReportService extends BaseService<ReportDTO> {
     }
   ): Observable<void> {
     return this.http.post<void>(`${this.url}/${reportId}/survey`, surveyData);
+  }
+
+  getDenouncedCases(): Observable<DenouncedCaseDTO[]> {
+    return this.http.get<DenouncedCaseDTO[]>(`/api/v1/denunciado/casos`).pipe(
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  getDefense(reportId: number | string): Observable<DefenseDTO> {
+    return this.http.get<DefenseDTO>(`${this.url}/${reportId}/defesa`).pipe(
+      catchError(err => this.handleError(err))
+    );
+  }
+
+  submitDefense(
+    reportId: number | string,
+    request: DefenseRequestDTO,
+    files?: File[] | null
+  ): Observable<DefenseDTO> {
+    const formData = new FormData();
+    formData.append(
+      'defense',
+      new Blob([JSON.stringify(request)], { type: 'application/json' })
+    );
+
+    (files || []).forEach(f => formData.append('files', f));
+
+    return this.http.post<DefenseDTO>(`${this.url}/${reportId}/defesa`, formData).pipe(
+      catchError(err => this.handleError(err))
+    );
   }
 }
