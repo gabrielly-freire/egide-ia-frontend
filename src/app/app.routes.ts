@@ -110,6 +110,24 @@ export const routes: Routes = [
         data: { roles: ['GENERAL_LISTENER', 'ADMIN'] }
       },
       {
+        path: 'manifestacoes/:id/defesa',
+        loadComponent: () =>
+          import('./pages/defense-review/defense-review').then(m => m.DefenseReview),
+        title: 'Égide - Analisar Defesa'
+      },
+      {
+        path: 'defesa/casos',
+        loadComponent: () =>
+          import('./pages/denounced-cases/denounced-cases').then(m => m.DenouncedCases),
+        title: 'Égide - Casos contra mim'
+      },
+      {
+        path: 'defesa/casos/:id',
+        loadComponent: () =>
+          import('./pages/denounced-case/denounced-case').then(m => m.DenouncedCase),
+        title: 'Égide - Enviar Defesa'
+      },
+      {
         path: 'ouvidor-geral/casos/:id',
         loadComponent: () =>
           import('./pages/ouvidor-geral-validation/ouvidor-geral-validation')
@@ -124,6 +142,12 @@ export const routes: Routes = [
         title: 'Égide - Usuários',
         canActivate: [roleGuard],
         data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'notificacoes',
+        loadComponent: () =>
+          import('./pages/notifications/notifications').then(m => m.Notifications),
+        title: 'Égide - Notificações'
       }
     ]
   },

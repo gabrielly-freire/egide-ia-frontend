@@ -1,0 +1,17 @@
+<div class="page">
+  <h2>Casos contra mim</h2>
+
+  <div *ngIf="loading()">Carregando...</div>
+
+  <div *ngIf="!loading() && cases().length === 0" class="empty">
+    Nenhum caso disponível.
+  </div>
+
+  <div class="cards" *ngIf="!loading() && cases().length > 0">
+    <a class="card" *ngFor="let c of cases()" [routerLink]="['/defesa/casos', c.reportId]">
+      <div class="title">{{ c.protocolNumber }} — {{ c.title }}</div>
+      <div class="meta">Status: {{ c.status }}</div>
+      <div class="desc">{{ c.description }}</div>
+    </a>
+  </div>
+</div>
