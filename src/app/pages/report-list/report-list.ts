@@ -48,4 +48,15 @@ export class ReportList implements OnInit {
     if (s === 'ANALYZED' || s === 'ANALISADO') return 'status-completed';
     return 'status-analysis';
   }
+
+  downloadPdf(reportId: number): void {
+  this.reportService.exportarPdf(reportId).subscribe(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `relatorio-${reportId}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+}
 }

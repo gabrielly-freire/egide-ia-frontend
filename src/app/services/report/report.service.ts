@@ -143,4 +143,16 @@ export class ReportService extends BaseService<ReportDTO> {
       catchError(err => this.handleError(err))
     );
   }
+
+  concluirRelato(reportId: number | string): Observable<ReportDTO> {
+    return this.http
+      .post<ReportDTO>(`${this.url}/${reportId}/concluir`, {})
+      .pipe(catchError(err => this.handleError(err)));
+  }
+
+  exportarPdf(reportId: number | string): Observable<Blob> {
+    return this.http
+      .get(`${this.url}/${reportId}/exportar`, { responseType: 'blob' })
+      .pipe(catchError(err => this.handleError(err)));
+  }
 }

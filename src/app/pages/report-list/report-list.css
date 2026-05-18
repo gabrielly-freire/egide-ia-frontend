@@ -101,4 +101,19 @@
 
 .status-analysis { background: #e0e7ff; color: #4338ca; }
 .status-completed { background: #dcfce7; color: #166534; }
-.btn-view { background: none; border: none; cursor: pointer; color: #6366f1; font-size: 18px; }
+.btn-view,
+.btn-export {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-view { color: #6366f1; }
+.btn-view:hover { background: #e0e7ff; }
+
+.btn-export { color: #dc2626; }
+.btn-export:hover { background: #fee2e2; }
