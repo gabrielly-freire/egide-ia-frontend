@@ -30,4 +30,15 @@ export class Dashboard implements OnInit {
       error: (err) => console.error('Erro ao buscar dashboard:', err)
     });
   }
+
+  downloadGovernancePdf(): void {
+  this.reportService.exportarGovernanca().subscribe(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `governanca-${new Date().toISOString().slice(0, 10)}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+}
 }

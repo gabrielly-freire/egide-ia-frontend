@@ -155,4 +155,11 @@ export class ReportService extends BaseService<ReportDTO> {
       .get(`${this.url}/${reportId}/exportar`, { responseType: 'blob' })
       .pipe(catchError(err => this.handleError(err)));
   }
+
+  exportarGovernanca(): Observable<Blob> {
+  return this.http
+    .get(`${this.url}/exportar-governanca`, { responseType: 'blob' })
+    .pipe(catchError(err => this.handleError(err)));
+}
+
 }
